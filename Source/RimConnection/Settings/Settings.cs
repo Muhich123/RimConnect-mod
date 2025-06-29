@@ -18,6 +18,9 @@ namespace RimConnection
 #endif
 
         public static string donationAlertsToken = "";
+        // Legacy fields required by some API classes
+        public static string secret = "";
+        public static string token = "";
         public static int lastDonationId = 0;
         public static bool initialiseSuccessful = false;
 
@@ -30,6 +33,8 @@ namespace RimConnection
             base.ExposeData();
 
             Scribe_Values.Look(ref donationAlertsToken, "donationAlertsToken", "");
+            Scribe_Values.Look(ref secret, "secret", "");
+            Scribe_Values.Look(ref token, "token", "");
             Scribe_Values.Look(ref silverAwardPoints, "silverAwardPoints");
             Scribe_Values.Look(ref lastDonationId, "lastDonationId");
 
