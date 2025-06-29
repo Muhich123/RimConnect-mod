@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Verse;
+using RimConnection.API;
 
 namespace RimConnection
 {
@@ -28,8 +29,7 @@ namespace RimConnection
 
         public override void GameComponentTick()
         {
-            // Only do this stuff if the mod successfully connected to the server
-            if (RimConnectSettings.initialiseSuccessful)
+            if (!string.IsNullOrEmpty(RimConnectSettings.donationAlertsToken))
             {
                 if (DateTime.UtcNow - lastGETRequest > timeBetweenRequests)
                 {
@@ -49,14 +49,30 @@ namespace RimConnection
         public static async void ServerChecker()
         {
             await Task.Run(() =>
-                {
-                    List<Command> commands = RimConnectAPI.GetCommands();
+            {
+                var donations = DonationAlertsAPI.GetDonations(RimConnectSettings.donationAlertsToken);
 
-                    foreach (Command command in commands)
+                foreach (var donation in donations)
+                {
+                    if (donation.id <= RimConnectSettings.lastDonationId)
+                        continue;
+
+                    RimConnectSettings.lastDonationId = donation.id;
+
+                    if (CommandOptionListController.commandOptionList == null)
+                        continue;
+
+                    foreach (var option in CommandOptionListController.commandOptionList.commandOptions)
                     {
-                        addCommandToQueue(command);
+                        if (option.costSilverStore == (int)donation.amount)
+                        {
+                            Command cmd = new Command { actionHash = option.actionHash, amount = 1, boughtBy = donation.username };
+                            addCommandToQueue(cmd);
+                            break;
+                        }
                     }
-                });
+                }
+            });
 
             return;
         }
