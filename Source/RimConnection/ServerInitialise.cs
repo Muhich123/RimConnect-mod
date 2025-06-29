@@ -1,20 +1,27 @@
-﻿using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Verse;
-using RimWorld;
 
 namespace RimConnection
 {
+    [StaticConstructorOnStartup]
     public static class ServerInitialise
     {
+        static ServerInitialise()
+        {
+            Init();
+        }
 
         public static bool Init()
         {
-            Log.Message("DonationAlerts mode active - no server initialisation");
+            Log.Message("Initialising DonationAlerts mode");
+
+            // Build a local list of command options so the loyalty store works
+            CommandOptionList optionList = new CommandOptionList();
+            var validCommands = ActionList.ActionListToApi().validCommands;
+            optionList.commandOptions = validCommands.Select(vc => vc.toCommandOption()).ToList();
+            Settings.CommandOptionListController.commandOptionList = optionList;
+
+            RimConnectSettings.initialiseSuccessful = true;
             return true;
         }
     }
