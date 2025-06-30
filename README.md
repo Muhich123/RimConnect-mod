@@ -41,3 +41,19 @@ There are 3 major component that make RimConnect work. The server and extension 
   - Build the project every time you save
 - Original modding tutorial setup from RimWorld wiki
   - https://rimworldwiki.com/wiki/Modding_Tutorials/Setting_up_a_solution
+
+## Donation Alerts Integration
+
+The repository includes an optional script `donationalerts_listener.py` which
+allows triggering in‑game events when a donation is received via
+[DonationAlerts](https://www.donationalerts.com/).
+
+Run the script with the environment variable `DONATIONALERTS_TOKEN` set to your
+API token. Set `RIMWORLD_CONFIG_PATH` to the folder containing RimWorld's
+`Config` directory if it is not automatically detected, or set
+`DONATION_QUEUE_PATH` directly to override the path used for communication.
+
+Each received donation is written to a queue file which the mod reads at runtime
+via the new `DonationFilePoller` component. When the donation amount matches the
+cost of an event in the loyalty store settings, that event will be executed in
+game.
