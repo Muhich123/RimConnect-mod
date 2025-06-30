@@ -147,7 +147,12 @@ namespace RimConnection
                 else
                 {
                     initialiseSuccessful = false;
-                    Log.Error($"[RimConnect] Failed to connect to DonationAlerts. HTTP {response.StatusCode}. Check your token.");
+                    string extra = string.IsNullOrEmpty(response.ErrorMessage) ? "" : $" ({response.ErrorMessage})";
+                    if (response.StatusCode == 0)
+                    {
+                        extra = string.IsNullOrEmpty(extra) ? " (no response)" : extra;
+                    }
+                    Log.Error($"[RimConnect] Failed to connect to DonationAlerts. HTTP {(int)response.StatusCode}{extra}. Check your token or connection.");
                 }
             }
             catch (System.Exception e)
