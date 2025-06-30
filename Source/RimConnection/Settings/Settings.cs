@@ -117,7 +117,7 @@ namespace RimConnection
                 return;
             }
             // Ensure TLS 1.2 so HTTPS requests succeed on older .NET installs
-            System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
             var client = new RestClient("https://www.donationalerts.com/api/v1/");
             var request = new RestRequest("alerts/donations", Method.GET);
             request.AddHeader("Authorization", $"Bearer {donationToken}");
@@ -150,9 +150,13 @@ namespace RimConnection
                 {
                     initialiseSuccessful = false;
                     string extra = string.IsNullOrEmpty(response.ErrorMessage) ? "" : $" ({response.ErrorMessage})";
-                    if (response.StatusCode == 0)
+                    if (response.ErrorException != null)
                     {
-                        extra = string.IsNullOrEmpty(extra) ? " (no response)" : extra;
+                        extra += $" ({response.ErrorException.GetType().Name}: {response.ErrorException.Message})";
+                    }
+                    if (response.StatusCode == 0 && string.IsNullOrEmpty(extra))
+                    {
+                        extra = " (no response)";
                     }
                     Log.Error($"[RimConnect] Failed to connect to DonationAlerts. HTTP {(int)response.StatusCode}{extra}. Check your token or connection.");
                 }
