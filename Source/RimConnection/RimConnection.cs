@@ -10,7 +10,6 @@ namespace RimConnection
         public RimConnection(ModContentPack content) : base(content)
         {
             settings = GetSettings<RimConnectSettings>();
-            InitializeEventList();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)
@@ -23,15 +22,7 @@ namespace RimConnection
             return "RimConnect";
         }
 
-        private void InitializeEventList()
-        {
-            ActionList.GenerateActionLookup();
-            var validCommands = ActionList.ActionListToApi().validCommands;
-            Settings.CommandOptionListController.commandOptionList = new CommandOptionList()
-            {
-                commandOptions = validCommands.ConvertAll(vc => vc.toCommandOption())
-            };
-            Log.Message($"[RimConnect] Initialized {Settings.CommandOptionListController.commandOptionList.commandOptions.Count} events locally.");
-        }
+        // Event list generation now occurs after game defs are loaded via
+        // DonationInitialise to ensure DefOfs are available.
     }
 }
