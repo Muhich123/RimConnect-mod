@@ -126,6 +126,7 @@
     <Compile Include="API\CommandList.cs" />
     <Compile Include="SetWorldName.cs" />
     <Compile Include="Windows\TextInputWindow.cs" />
+    <Compile Include="DonationFilePoller.cs" />
   </ItemGroup>
   <ItemGroup>
     <ContentWithTargetPath Include="About\About.xml">
