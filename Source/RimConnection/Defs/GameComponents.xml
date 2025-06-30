@@ -1,0 +1,6 @@
+<Defs>
+    <GameComponentDef>
+        <defName>RC_ServerPoller</defName>
+        <class>RimConnection.ServerPoller</class>
+    </GameComponentDef>
+</Defs>
