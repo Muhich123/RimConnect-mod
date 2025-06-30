@@ -54,7 +54,8 @@ namespace RimConnection.Settings
                 return;
             }
 
-            RimConnectAPI.PostUpdatedCommandOptions(updatedCommandOptions);
+            // In the DonationAlerts version we only update the local settings
+            // without sending them to an external server.
 
             // Update the global CommandOptionList with the modified CommandOptionList
             this.cachedCommandOptionList.commandOptions = this.commandOptions;
@@ -270,7 +271,9 @@ namespace RimConnection.Settings
             Widgets.Label(eventLabel, "<b>Events</b>");
 
             Rect silverCostLabel = new Rect(rect.width - 580f, rect.y, 75f, rect.height);
-            Widgets.Label(silverCostLabel, "<b>Silver Cost</b>");
+            // In the DonationAlerts version the cost represents the donation amount
+            // required to trigger the event.
+            Widgets.Label(silverCostLabel, "<b>Donation Amount</b>");
 
             Rect localCooldownLabel = new Rect(silverCostLabel);
             localCooldownLabel.x += localCooldownLabel.width + 75f;
@@ -423,7 +426,7 @@ namespace RimConnection.Settings
             int newGlobalCooldown = commandOption.globalCooldownMs / 1000;
             string globalCooldownLabel = newGlobalCooldown.ToString();
 
-            // Silver Cost
+            // Donation amount matching this event
             Widgets.TextFieldNumeric(rect2, ref newPrice, ref priceLabel, 0f);
             filteredRows[index].costSilverStore = newPrice;
 

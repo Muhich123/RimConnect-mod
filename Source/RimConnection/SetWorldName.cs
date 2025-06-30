@@ -1,8 +1,8 @@
-﻿using System;
 using Verse;
 
 namespace RimConnection
 {
+    // Legacy component kept for compatibility with older save games.
     class SetWorldName : GameComponent
     {
         public SetWorldName(Game game)
@@ -18,7 +18,7 @@ namespace RimConnection
             base.FinalizeInit();
             string worldName = Find.World.info.name;
             Log.Message($"World name is {worldName}");
-            RimConnectAPI.UpdateWorld(worldName);
+            // Previously this sent the world name to a server. No longer needed.
         }
     }
 }

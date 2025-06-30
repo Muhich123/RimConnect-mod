@@ -1,26 +1,28 @@
-﻿using UnityEngine;
+using UnityEngine;
 using Verse;
 
 namespace RimConnection
 {
-    public class RimConnection: Mod
+    public class RimConnection : Mod
     {
         RimConnectSettings settings;
 
-
         public RimConnection(ModContentPack content) : base(content)
         {
-            this.settings = GetSettings<RimConnectSettings>();
+            settings = GetSettings<RimConnectSettings>();
         }
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
-            this.settings.DoWindowContents(inRect);
+            settings.DoWindowContents(inRect);
         }
 
         public override string SettingsCategory()
         {
             return "RimConnect";
         }
+
+        // Event list generation now occurs after game defs are loaded via
+        // DonationInitialise to ensure DefOfs are available.
     }
 }

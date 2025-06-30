@@ -102,10 +102,8 @@
     <Compile Include="Actions\Orbital\OrbitalBombardmentAction.cs" />
     <Compile Include="Actions\Orbital\TornadoAction.cs" />
     <Compile Include="Actions\Weather\WeatherAction.cs" />
-    <Compile Include="API\AuthMod.cs" />
     <Compile Include="API\CommandOption.cs" />
     <Compile Include="API\Config.cs" />
-    <Compile Include="API\PostWorld.cs" />
     <Compile Include="API\ValidCommand.cs" />
     <Compile Include="IncidentWorkers\IncidentWorker_AlphaBeavers.cs" />
     <Compile Include="Patches\MPCompat.cs" />
@@ -114,17 +112,18 @@
     <Compile Include="Settings\ResetCommandOptionsModal.cs" />
     <Compile Include="Settings\CommandOptionSettings.cs" />
     <Compile Include="Managers\AlertManager.cs" />
+    <Compile Include="DonationPoller.cs" />
     <Compile Include="ServerPoller.cs" />
+    <Compile Include="DonationInitialise.cs" />
+    <Compile Include="SetWorldName.cs" />
+    <Compile Include="API/DonationAlerts.cs" />
     <Compile Include="Managers\PawnCreationManager.cs" />
     <Compile Include="RimConnection.cs" />
-    <Compile Include="API\RimConnectAPI.cs" />
     <Compile Include="Managers\DropPodManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerInitialise.cs" />
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="API\CommandList.cs" />
-    <Compile Include="SetWorldName.cs" />
     <Compile Include="Windows\TextInputWindow.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,39 +1,22 @@
-﻿using System.Text.RegularExpressions;
-using RimConnection.API;
-using RimConnection.Settings;
+using RestSharp;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using RimConnection.Settings;
 
 namespace RimConnection
 {
     public class RimConnectSettings : ModSettings
     {
-        public static string[] validCommands;
-
-#if DEBUG
-        public static string BASE_URL = "http://localhost:8080/";
-#else
-        public static string BASE_URL = "http://rimconnect-backend.herokuapp.com/";
-#endif
-
-        public static string secret = "";
-        public static string token = "";
+        public static string donationToken = "";
         public static bool initialiseSuccessful = false;
-
-        bool showSecret = false;
-
-        public static int silverAwardPoints = -1;
-
+        private bool showToken = false;
         private static float defaultWidth = 200f;
 
         public override void ExposeData()
         {
             base.ExposeData();
-
-            Scribe_Values.Look<string>(ref secret, "secret", "", true);
-            Scribe_Values.Look(ref silverAwardPoints, "silverAwardPoints");
-
+            Scribe_Values.Look(ref donationToken, "donationToken", "", true);
         }
 
         public void DoWindowContents(Rect rect)
@@ -42,7 +25,6 @@ namespace RimConnection
             Widgets.Label(accountLinkHeader, "<size=32>Account Link</size>");
 
             Rect statusGroup = new Rect(0, accountLinkHeader.y + accountLinkHeader.height + 10f, rect.width, 48f);
-
             GUI.BeginGroup(statusGroup);
 
             Rect statusLabel = new Rect(0, 0, defaultWidth, 24f);
@@ -52,131 +34,138 @@ namespace RimConnection
             if (initialiseSuccessful)
             {
                 Widgets.Label(statusLabel, "<color=green>Connected!</color>");
-
                 if (Widgets.ButtonText(connectionButton, "Reconnect"))
                 {
-                    ServerInitialise.Init();
+                    TryConnectDonationAlerts();
                 }
             }
             else
             {
                 Widgets.Label(statusLabel, "<color=red>Disconnected</color>");
-
                 if (Widgets.ButtonText(connectionButton, "Connect"))
                 {
-                    ServerInitialise.Init();
+                    TryConnectDonationAlerts();
                 }
             }
-
             GUI.EndGroup();
 
-            Rect secretGroup = new Rect(0, statusGroup.y + statusGroup.height + 20f, rect.width, 72f);
+            Rect tokenGroup = new Rect(0, statusGroup.y + statusGroup.height + 20f, rect.width, 72f);
+            GUI.BeginGroup(tokenGroup);
 
-            GUI.BeginGroup(secretGroup);
-
-            Rect secretLabel = new Rect(0, 0, defaultWidth, 24f);
+            Rect tokenLabel = new Rect(0, 0, defaultWidth, 24f);
             Rect pasteButton = new Rect(defaultWidth, 24f, defaultWidth, 24f);
             Rect warningLabel = new Rect(0, 48, 400f, 24f);
 
-            Widgets.Label(secretLabel, "Secret:");
-            secretLabel.x = secretLabel.width + WidgetRow.LabelGap;
-            
-            if (showSecret)
+            Widgets.Label(tokenLabel, "Donation Token:");
+            tokenLabel.x = tokenLabel.width + WidgetRow.LabelGap;
+            if (showToken)
             {
-                secret = Widgets.TextField(secretLabel, secret);
+                donationToken = Widgets.TextField(tokenLabel, donationToken);
             }
             else
             {
-                Widgets.Label(secretLabel, new string('*', secret.Length));
+                Widgets.Label(tokenLabel, new string('*', donationToken.Length));
             }
 
-            secretLabel.x += secretLabel.width + WidgetRow.LabelGap;
-            if (!showSecret && Widgets.ButtonText(secretLabel, "Show"))
+            tokenLabel.x += tokenLabel.width + WidgetRow.LabelGap;
+            if (!showToken && Widgets.ButtonText(tokenLabel, "Show"))
             {
-                showSecret = true;
+                showToken = true;
             }
-            else if (Widgets.ButtonText(secretLabel, "Hide"))
+            else if (showToken && Widgets.ButtonText(tokenLabel, "Hide"))
             {
-                showSecret = false;
+                showToken = false;
             }
 
             if (Widgets.ButtonText(pasteButton, "Paste from Clipboard"))
             {
-                secret = GUIUtility.systemCopyBuffer;
+                donationToken = GUIUtility.systemCopyBuffer;
             }
-
-            Widgets.Label(warningLabel, "<color=red>Warning: Do not show your secret on stream!</color>");
-
+            Widgets.Label(warningLabel, "<color=red>Warning: Do not show your token on stream!</color>");
             GUI.EndGroup();
 
-            Rect loyaltyStoreHeader = new Rect(0, secretGroup.y + secretGroup.height + 10f, rect.width, 64f);
-            Widgets.Label(loyaltyStoreHeader, "<size=32>Loyalty Settings</size>");
+            Rect eventsHeader = new Rect(0, tokenGroup.y + tokenGroup.height + 10f, rect.width, 64f);
+            Widgets.Label(eventsHeader, "<size=32>Donation Event Settings</size>");
 
-            Rect itemStoreGroup = new Rect(0, loyaltyStoreHeader.y + loyaltyStoreHeader.height + 10f, rect.width, 24f);
-
-            if (CommandOptionListController.commandOptionList != null)
+            Rect itemStoreGroup = new Rect(0, eventsHeader.y + eventsHeader.height + 10f, rect.width, 24f);
+            GUI.BeginGroup(itemStoreGroup);
+            Rect itemLabel = new Rect(0, 0, defaultWidth, 24f);
+            Widgets.Label(itemLabel, "Events:");
+            itemLabel.x += itemLabel.width + WidgetRow.LabelGap;
+            if (Widgets.ButtonText(itemLabel, "Edit"))
             {
-                GUI.BeginGroup(itemStoreGroup);
+                CommandOptionSettings window = new CommandOptionSettings();
+                Find.WindowStack.TryRemove(window.GetType());
+                Find.WindowStack.Add(window);
+            }
+            itemLabel.x += itemLabel.width + WidgetRow.LabelGap;
+            if (Widgets.ButtonText(itemLabel, "Reset"))
+            {
+                ResetCommandOptionsModal window = new ResetCommandOptionsModal();
+                Find.WindowStack.TryRemove(window.GetType());
+                Find.WindowStack.Add(window);
+            }
+            GUI.EndGroup();
+        }
 
-                Rect itemLabel = new Rect(0, 0, defaultWidth, 24f);
-                Widgets.Label(itemLabel, "Loyalty Store Items:");
-
-                itemLabel.x += itemLabel.width + WidgetRow.LabelGap;
-
-                if (Widgets.ButtonText(itemLabel, "Items"))
+        private void TryConnectDonationAlerts()
+        {
+            if (string.IsNullOrEmpty(donationToken))
+            {
+                Log.Error("DonationAlerts token is empty! Please enter your token.");
+                initialiseSuccessful = false;
+                return;
+            }
+            // Ensure TLS 1.2 is enabled so HTTPS requests succeed on older .NET installs
+            System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
+            var client = new RestClient("https://www.donationalerts.com/api/v1/");
+            var request = new RestRequest("alerts/donations", Method.GET);
+            request.AddHeader("Authorization", $"Bearer {donationToken}");
+            try
+            {
+                var response = client.Execute<DonationAlertsResponse>(request);
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    CommandOptionSettings window = new CommandOptionSettings();
-                    Find.WindowStack.TryRemove(window.GetType());
-                    Find.WindowStack.Add(window);
+                    DonationAlertsResponse data = response.Data;
+                    if (data != null && data.data != null)
+                    {
+                        int maxId = 0;
+                        foreach (var donation in data.data)
+                        {
+                            if (donation.id > maxId)
+                                maxId = donation.id;
+                        }
+                        initialiseSuccessful = true;
+                        DonationPoller.lastDonationId = maxId;
+                        Log.Message("[RimConnect] Connected to DonationAlerts successfully.");
+                    }
+                    else
+                    {
+                        initialiseSuccessful = true;
+                        DonationPoller.lastDonationId = 0;
+                        Log.Message("[RimConnect] Connected to DonationAlerts (no donations yet).");
+                    }
                 }
-
-                itemLabel.x += itemLabel.width + WidgetRow.LabelGap;
-                if (Widgets.ButtonText(itemLabel, "Reset")) {
-                    ResetCommandOptionsModal window = new ResetCommandOptionsModal();
-                    Find.WindowStack.TryRemove(window.GetType());
-                    Find.WindowStack.Add(window);
+                else
+                {
+                    initialiseSuccessful = false;
+                    string extra = string.IsNullOrEmpty(response.ErrorMessage) ? "" : $" ({response.ErrorMessage})";
+                    if (response.ErrorException != null)
+                    {
+                        extra += $" ({response.ErrorException.GetType().Name}: {response.ErrorException.Message})";
+                    }
+                    if (response.StatusCode == 0 && string.IsNullOrEmpty(extra))
+                    {
+                        extra = " (no response)";
+                    }
+                    Log.Error($"[RimConnect] Failed to connect to DonationAlerts. HTTP {(int)response.StatusCode}{extra}. Check your token or connection.");
                 }
-
-                GUI.EndGroup();
             }
-            else
+            catch (System.Exception e)
             {
-                Widgets.Label(itemStoreGroup, "Cannot edit items without proper connection to RimConnect Servers");
+                initialiseSuccessful = false;
+                Log.Error("[RimConnect] Error connecting to DonationAlerts: " + e.Message);
             }
-
-            Rect silversPerGroup = new Rect(0, itemStoreGroup.y + itemStoreGroup.height + 10f, rect.width, 24f);
-            GUI.BeginGroup(silversPerGroup);
-
-            Rect silverLabel = new Rect(0, 0, defaultWidth, 24f);
-            Widgets.Label(silverLabel, "Silver per 2 minutes:");
-
-            silverLabel.x += silverLabel.width + WidgetRow.LabelGap;
-
-            string silverAwardPointsBuffer = silverAwardPoints.ToString();
-            Widgets.TextFieldNumeric(silverLabel, ref silverAwardPoints, ref silverAwardPointsBuffer);
-
-            silverLabel.x += silverLabel.width + WidgetRow.LabelGap;
-
-            if (Widgets.ButtonText(silverLabel, "Update on Server"))
-            {
-                RimConnectAPI.PostConfig();
-            }
-
-            GUI.EndGroup();
-
-            Rect AdditionalInfoGroup = new Rect(0, silversPerGroup.y + 70f, rect.width, 50f);
-            GUI.BeginGroup(AdditionalInfoGroup);
-
-            Rect additionalInfoLabel = new Rect(0, 0, 2 * defaultWidth, 24f);
-            Widgets.Label(additionalInfoLabel, "Did you know that the RimConnect mod is now open source?");
-
-            Rect githubLinkLabel = new Rect(2 * defaultWidth + 2 * WidgetRow.LabelGap, 0, defaultWidth, 24f);
-            if(Widgets.ButtonText(githubLinkLabel, "Check it out here"))
-            {
-                Application.OpenURL("https://github.com/Better-Scenes/RimConnect-mod");
-            }
-
-            GUI.EndGroup();
         }
     }
 }
