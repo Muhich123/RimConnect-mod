@@ -24,7 +24,11 @@ namespace RimConnection.API
 
         public static List<Donation> GetDonations(string token)
         {
-            if (string.IsNullOrEmpty(token)) return new List<Donation>();
+            if (string.IsNullOrEmpty(token))
+            {
+                Log.Warning("DonationAlertsAPI missing token");
+                return new List<Donation>();
+            }
 
             var request = new RestRequest("alerts/donations", Method.GET);
             request.AddHeader("Authorization", $"Bearer {token}");
@@ -32,11 +36,18 @@ namespace RimConnection.API
             try
             {
                 var response = client.Execute<DonationList>(request);
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    Log.Warning("DonationAlertsAPI failed: Unauthorized");
+                    return new List<Donation>();
+                }
+
                 if (response.StatusCode != System.Net.HttpStatusCode.OK || response.Data == null)
                 {
                     Log.Warning($"DonationAlertsAPI failed: {response.StatusCode}");
                     return new List<Donation>();
                 }
+
                 return response.Data.data ?? new List<Donation>();
             }
             catch (Exception e)
