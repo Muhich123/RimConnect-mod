@@ -8,7 +8,7 @@ using Verse;
 
 namespace RimConnection
 {
-    class ServerPoller : GameComponent
+    public class ServerPoller : GameComponent
     {
         static DateTime lastGETRequest = DateTime.UtcNow;
         static readonly TimeSpan timeBetweenRequests = TimeSpan.FromSeconds(30d);
