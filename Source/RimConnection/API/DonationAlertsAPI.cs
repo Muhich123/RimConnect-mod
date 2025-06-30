@@ -20,7 +20,7 @@ namespace RimConnection.API
 
     public static class DonationAlertsAPI
     {
-        private static RestClient client = new RestClient("https://www.donationalerts.com/api/v1/");
+        private static readonly RestClient client = new RestClient("https://www.donationalerts.com/api/v1/");
 
         public static List<Donation> GetDonations(string token)
         {
@@ -32,13 +32,15 @@ namespace RimConnection.API
 
             var request = new RestRequest("alerts/donations", Method.GET);
             request.AddHeader("Authorization", $"Bearer {token}");
+            request.AddHeader("Accept", "application/json");
+            request.AddQueryParameter("access_token", token);
 
             try
             {
                 var response = client.Execute<DonationList>(request);
                 if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
                 {
-                    Log.Warning("DonationAlertsAPI failed: Unauthorized");
+                    Log.Warning("DonationAlertsAPI failed: Unauthorized - check your DonationAlerts token");
                     return new List<Donation>();
                 }
 
