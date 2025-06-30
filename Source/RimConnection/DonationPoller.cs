@@ -14,7 +14,9 @@ namespace RimConnection
         private static DateTime lastCheckTime = DateTime.UtcNow;
         private static ConcurrentQueue<Command> commandQueue = new ConcurrentQueue<Command>();
 
-        public DonationPoller(Game game) : base(game) { }
+        public DonationPoller(Game game)
+        {
+        }
 
         public override void GameComponentTick()
         {

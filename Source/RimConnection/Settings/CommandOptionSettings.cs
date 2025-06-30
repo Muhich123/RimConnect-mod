@@ -54,7 +54,8 @@ namespace RimConnection.Settings
                 return;
             }
 
-            RimConnectAPI.PostUpdatedCommandOptions(updatedCommandOptions);
+            // In the DonationAlerts version we only update the local settings
+            // without sending them to an external server.
 
             // Update the global CommandOptionList with the modified CommandOptionList
             this.cachedCommandOptionList.commandOptions = this.commandOptions;

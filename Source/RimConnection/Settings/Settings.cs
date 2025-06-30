@@ -2,6 +2,7 @@ using RestSharp;
 using RimWorld;
 using UnityEngine;
 using Verse;
+using RimConnection.Settings;
 
 namespace RimConnection
 {
