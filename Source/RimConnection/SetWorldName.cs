@@ -5,11 +5,11 @@ namespace RimConnection
     // Legacy component kept for compatibility with older save games.
     class SetWorldName : GameComponent
     {
-        public SetWorldName(Game game) : base(game)
+        public SetWorldName(Game game)
         {
         }
 
-        public SetWorldName() : base(null)
+        public SetWorldName()
         {
         }
 

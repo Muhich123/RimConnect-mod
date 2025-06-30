@@ -6,11 +6,13 @@ namespace RimConnection
     // It now simply uses the DonationPoller logic.
     class ServerPoller : DonationPoller
     {
-        public ServerPoller(Game game) : base(game)
+        public ServerPoller(Game game)
+            : base(game)
         {
         }
 
-        public ServerPoller() : base(null)
+        public ServerPoller()
+            : base(null)
         {
         }
     }
