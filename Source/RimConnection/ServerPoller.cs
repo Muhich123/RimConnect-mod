@@ -1,9 +1,8 @@
 ﻿using Multiplayer.API;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
 using Verse;
 
@@ -15,15 +14,8 @@ namespace RimConnection
         static readonly TimeSpan timeBetweenRequests = TimeSpan.FromSeconds(30d);
         static ConcurrentQueue<Command> commandQueue = new ConcurrentQueue<Command>();
 
-        private DateTime previousDateTime;
-
         public ServerPoller(Game game)
         {
-        }
-
-        public override void FinalizeInit()
-        {
-            previousDateTime = DateTime.Now;
         }
 
         public override void GameComponentTick()
@@ -34,7 +26,7 @@ namespace RimConnection
                 if (DateTime.UtcNow - lastGETRequest > timeBetweenRequests)
                 {
                     lastGETRequest = DateTime.UtcNow;
-                    ServerChecker();
+                    DonationChecker();
                 }
             }
 
@@ -46,19 +38,29 @@ namespace RimConnection
             }
         }
 
-        public static async void ServerChecker()
+        public static async void DonationChecker()
         {
             await Task.Run(() =>
+            {
+                List<Donation> donations = DonationAlertsAPI.GetNewDonations(RimConnectSettings.token);
+                foreach (Donation donation in donations)
                 {
-                    List<Command> commands = RimConnectAPI.GetCommands();
-
-                    foreach (Command command in commands)
+                    int amountValue = (int)Math.Floor(donation.amount);
+                    foreach (var option in Settings.CommandOptionListController.commandOptionList.commandOptions)
                     {
-                        addCommandToQueue(command);
+                        if (option.costSilverStore == amountValue)
+                        {
+                            Command command = new Command
+                            {
+                                actionHash = option.actionHash,
+                                amount = 1,
+                                boughtBy = donation.username
+                            };
+                            addCommandToQueue(command);
+                        }
                     }
-                });
-
-            return;
+                }
+            });
         }
 
         [SyncMethod]
