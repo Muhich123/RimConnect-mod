@@ -113,6 +113,8 @@
     <Compile Include="Settings\CommandOptionSettings.cs" />
     <Compile Include="Managers\AlertManager.cs" />
     <Compile Include="DonationPoller.cs" />
+    <Compile Include="ServerPoller.cs" />
+    <Compile Include="SetWorldName.cs" />
     <Compile Include="API/DonationAlerts.cs" />
     <Compile Include="Managers\PawnCreationManager.cs" />
     <Compile Include="RimConnection.cs" />
