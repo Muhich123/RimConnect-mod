@@ -19,9 +19,11 @@ namespace RimConnection
 
         public static string secret = "";
         public static string token = "";
+        public static string donationAlertsToken = "";
         public static bool initialiseSuccessful = false;
 
         bool showSecret = false;
+        bool showDonationToken = false;
 
         public static int silverAwardPoints = -1;
 
@@ -33,6 +35,7 @@ namespace RimConnection
 
             Scribe_Values.Look<string>(ref secret, "secret", "", true);
             Scribe_Values.Look(ref silverAwardPoints, "silverAwardPoints");
+            Scribe_Values.Look(ref donationAlertsToken, "donationAlertsToken", "");
 
         }
 
@@ -109,7 +112,38 @@ namespace RimConnection
 
             GUI.EndGroup();
 
-            Rect loyaltyStoreHeader = new Rect(0, secretGroup.y + secretGroup.height + 10f, rect.width, 64f);
+            Rect daGroup = new Rect(0, secretGroup.y + secretGroup.height + 10f, rect.width, 72f);
+            GUI.BeginGroup(daGroup);
+
+            Rect daLabel = new Rect(0, 0, defaultWidth, 24f);
+            Rect daWarning = new Rect(0, 48, 400f, 24f);
+            Widgets.Label(daLabel, "DA Token:");
+            daLabel.x = daLabel.width + WidgetRow.LabelGap;
+
+            if (showDonationToken)
+            {
+                donationAlertsToken = Widgets.TextField(daLabel, donationAlertsToken);
+            }
+            else
+            {
+                Widgets.Label(daLabel, new string('*', donationAlertsToken.Length));
+            }
+
+            daLabel.x += daLabel.width + WidgetRow.LabelGap;
+            if (!showDonationToken && Widgets.ButtonText(daLabel, "Show"))
+            {
+                showDonationToken = true;
+            }
+            else if (Widgets.ButtonText(daLabel, "Hide"))
+            {
+                showDonationToken = false;
+            }
+
+            Widgets.Label(daWarning, "<color=red>Keep this token private!</color>");
+
+            GUI.EndGroup();
+
+            Rect loyaltyStoreHeader = new Rect(0, daGroup.y + daGroup.height + 10f, rect.width, 64f);
             Widgets.Label(loyaltyStoreHeader, "<size=32>Loyalty Settings</size>");
 
             Rect itemStoreGroup = new Rect(0, loyaltyStoreHeader.y + loyaltyStoreHeader.height + 10f, rect.width, 24f);
