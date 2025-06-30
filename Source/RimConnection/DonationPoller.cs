@@ -45,8 +45,8 @@ namespace RimConnection
             {
                 try
                 {
-                    // Force TLS 1.2 for HTTPS requests
-                    System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+                    // Ensure TLS 1.2 is enabled for HTTPS requests
+                    System.Net.ServicePointManager.SecurityProtocol |= System.Net.SecurityProtocolType.Tls12;
                     var client = new RestClient("https://www.donationalerts.com/api/v1/");
                     var request = new RestRequest("alerts/donations", Method.GET);
                     request.AddHeader("Authorization", $"Bearer {RimConnectSettings.donationToken}");
