@@ -54,8 +54,6 @@ namespace RimConnection.Settings
                 return;
             }
 
-            RimConnectAPI.PostUpdatedCommandOptions(updatedCommandOptions);
-
             // Update the global CommandOptionList with the modified CommandOptionList
             this.cachedCommandOptionList.commandOptions = this.commandOptions;
             CommandOptionListController.commandOptionList = this.cachedCommandOptionList;
@@ -270,7 +268,7 @@ namespace RimConnection.Settings
             Widgets.Label(eventLabel, "<b>Events</b>");
 
             Rect silverCostLabel = new Rect(rect.width - 580f, rect.y, 75f, rect.height);
-            Widgets.Label(silverCostLabel, "<b>Silver Cost</b>");
+            Widgets.Label(silverCostLabel, "<b>Donation Amount</b>");
 
             Rect localCooldownLabel = new Rect(silverCostLabel);
             localCooldownLabel.x += localCooldownLabel.width + 75f;
@@ -423,7 +421,7 @@ namespace RimConnection.Settings
             int newGlobalCooldown = commandOption.globalCooldownMs / 1000;
             string globalCooldownLabel = newGlobalCooldown.ToString();
 
-            // Silver Cost
+            // Donation Amount
             Widgets.TextFieldNumeric(rect2, ref newPrice, ref priceLabel, 0f);
             filteredRows[index].costSilverStore = newPrice;
 

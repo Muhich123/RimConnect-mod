@@ -18,7 +18,6 @@ namespace RimConnection
             base.FinalizeInit();
             string worldName = Find.World.info.name;
             Log.Message($"World name is {worldName}");
-            RimConnectAPI.UpdateWorld(worldName);
         }
     }
 }

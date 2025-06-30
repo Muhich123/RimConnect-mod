@@ -6,8 +6,8 @@ namespace RimConnection
 {
     static class AlertManager
     {
-        private static LetterDef twitchEventLetterDef = DefDatabase<LetterDef>.GetNamed("TwitchEvent");
-        private static LetterDef badTwitchEventLetterDef = DefDatabase<LetterDef>.GetNamed("DangerousTwitchEvent");
+        private static LetterDef donationEventLetterDef = DefDatabase<LetterDef>.GetNamed("DonationEvent");
+        private static LetterDef badDonationEventLetterDef = DefDatabase<LetterDef>.GetNamed("DangerousDonationEvent");
 
         private static void EventNotification(string label, string description, LetterDef letterDef, IntVec3? location)
         {
@@ -26,47 +26,47 @@ namespace RimConnection
         
         public static void BadEventNotification(string description)
         {
-            EventNotification("Twitch Event", description, badTwitchEventLetterDef, null );
+            EventNotification("Donation Event", description, badDonationEventLetterDef, null );
         }
         
         public static void BadEventNotification(string description, IntVec3 location)
         {
-            EventNotification("Twitch Event", description, badTwitchEventLetterDef, location);
+            EventNotification("Donation Event", description, badDonationEventLetterDef, location);
         }
 
         public static void BadEventNotification(string description, string boughtBy) 
         {
-            EventNotification("Twitch Event", ParseNotificationMessage(description, boughtBy), badTwitchEventLetterDef, null);
+            EventNotification("Donation Event", ParseNotificationMessage(description, boughtBy), badDonationEventLetterDef, null);
         }
 
         public static void BadEventNotification(string description, IntVec3 location, string boughtBy) 
         {
-            EventNotification("Twitch Event", ParseNotificationMessage(description, boughtBy), badTwitchEventLetterDef, location);
+            EventNotification("Donation Event", ParseNotificationMessage(description, boughtBy), badDonationEventLetterDef, location);
         }
         
         public static void NormalEventNotification(string description)
         {
-            EventNotification("Twitch Event", description, twitchEventLetterDef, null);
+            EventNotification("Donation Event", description, donationEventLetterDef, null);
         }
         
         public static void ResourceDropNotification(string description, IntVec3 location)
         {
-            EventNotification("Twitch Drop", description, twitchEventLetterDef, location);
+            EventNotification("Donation Drop", description, donationEventLetterDef, location);
         }
 
         public static void NormalEventNotification(string description, string boughtBy)
         {
-            EventNotification("Twitch Event", ParseNotificationMessage(description, boughtBy), twitchEventLetterDef, null);
+            EventNotification("Donation Event", ParseNotificationMessage(description, boughtBy), donationEventLetterDef, null);
         }
 
         public static void ResourceDropNotification(string description, IntVec3 location, string boughtBy)
         {
-            EventNotification("Twitch Drop", ParseNotificationMessage(description, boughtBy), twitchEventLetterDef, location);
+            EventNotification("Donation Drop", ParseNotificationMessage(description, boughtBy), donationEventLetterDef, location);
         }
         
         public static string ParseNotificationMessage(string message, string boughtBy) 
         {
-            if (boughtBy == "Poll") { boughtBy = "Your twitch viewers"; }
+            if (boughtBy == "Poll") { boughtBy = "Your viewers"; }
             boughtBy = $"<color=#9147ff>{boughtBy}</color>"; 
             return string.Format(message, boughtBy);
         }

@@ -17,11 +17,11 @@ namespace RimConnection
         public static string BASE_URL = "http://rimconnect-backend.herokuapp.com/";
 #endif
 
-        public static string secret = "";
+        public static string donationToken = "";
         public static string token = "";
         public static bool initialiseSuccessful = false;
 
-        bool showSecret = false;
+        bool showToken = false;
 
         public static int silverAwardPoints = -1;
 
@@ -31,7 +31,7 @@ namespace RimConnection
         {
             base.ExposeData();
 
-            Scribe_Values.Look<string>(ref secret, "secret", "", true);
+            Scribe_Values.Look<string>(ref donationToken, "donationToken", "", true);
             Scribe_Values.Look(ref silverAwardPoints, "silverAwardPoints");
 
         }
@@ -78,39 +78,39 @@ namespace RimConnection
             Rect pasteButton = new Rect(defaultWidth, 24f, defaultWidth, 24f);
             Rect warningLabel = new Rect(0, 48, 400f, 24f);
 
-            Widgets.Label(secretLabel, "Secret:");
+            Widgets.Label(secretLabel, "DonationAlerts Token:");
             secretLabel.x = secretLabel.width + WidgetRow.LabelGap;
-            
-            if (showSecret)
+
+            if (showToken)
             {
-                secret = Widgets.TextField(secretLabel, secret);
+                donationToken = Widgets.TextField(secretLabel, donationToken);
             }
             else
             {
-                Widgets.Label(secretLabel, new string('*', secret.Length));
+                Widgets.Label(secretLabel, new string('*', donationToken.Length));
             }
 
             secretLabel.x += secretLabel.width + WidgetRow.LabelGap;
-            if (!showSecret && Widgets.ButtonText(secretLabel, "Show"))
+            if (!showToken && Widgets.ButtonText(secretLabel, "Show"))
             {
-                showSecret = true;
+                showToken = true;
             }
             else if (Widgets.ButtonText(secretLabel, "Hide"))
             {
-                showSecret = false;
+                showToken = false;
             }
 
             if (Widgets.ButtonText(pasteButton, "Paste from Clipboard"))
             {
-                secret = GUIUtility.systemCopyBuffer;
+                donationToken = GUIUtility.systemCopyBuffer;
             }
 
-            Widgets.Label(warningLabel, "<color=red>Warning: Do not show your secret on stream!</color>");
+            Widgets.Label(warningLabel, "<color=red>Do not show this token on stream!</color>");
 
             GUI.EndGroup();
 
             Rect loyaltyStoreHeader = new Rect(0, secretGroup.y + secretGroup.height + 10f, rect.width, 64f);
-            Widgets.Label(loyaltyStoreHeader, "<size=32>Loyalty Settings</size>");
+            Widgets.Label(loyaltyStoreHeader, "<size=32>Donation Settings</size>");
 
             Rect itemStoreGroup = new Rect(0, loyaltyStoreHeader.y + loyaltyStoreHeader.height + 10f, rect.width, 24f);
 
@@ -119,7 +119,7 @@ namespace RimConnection
                 GUI.BeginGroup(itemStoreGroup);
 
                 Rect itemLabel = new Rect(0, 0, defaultWidth, 24f);
-                Widgets.Label(itemLabel, "Loyalty Store Items:");
+                Widgets.Label(itemLabel, "Donation Events:");
 
                 itemLabel.x += itemLabel.width + WidgetRow.LabelGap;
 
@@ -157,9 +157,9 @@ namespace RimConnection
 
             silverLabel.x += silverLabel.width + WidgetRow.LabelGap;
 
-            if (Widgets.ButtonText(silverLabel, "Update on Server"))
+            if (Widgets.ButtonText(silverLabel, "Update"))
             {
-                RimConnectAPI.PostConfig();
+                // no server sync required
             }
 
             GUI.EndGroup();

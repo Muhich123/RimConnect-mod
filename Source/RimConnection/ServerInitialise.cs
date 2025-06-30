@@ -21,33 +21,21 @@ namespace RimConnection
             ValidCommandPayloadGenerator validCommandPayloadGenerator = ActionList.ActionListToApi();
             try
             {
-                Log.Message("Initialising Server");
+                Log.Message("Initialising DonationAlerts integration");
 
-                var authed = RimConnectAPI.AuthSecret(RimConnectSettings.secret, out string Token);
-                if (!authed)
-                {
-                    Log.Error("Unable to Connect to RimConnect server.");
-                    RimConnectSettings.token = "";
-                    return false;
-                }
+                RimConnectSettings.token = RimConnectSettings.donationToken;
 
-                RimConnectSettings.token = Token;
-                RimConnectAPI.PostValidCommands(validCommandPayloadGenerator);
-                RimConnectAPI.GetConfig();
+                CommandOptionList commandOptionList = new CommandOptionList();
+                commandOptionList.commandOptions = validCommandPayloadGenerator.validCommands
+                    .Select(vc => vc.toCommandOption()).ToList();
+                Settings.CommandOptionListController.commandOptionList = commandOptionList;
 
-                //string worldName = Find.World.info.name;
-                var world = Find.World;
-                if(world != null)
-                {
-                    Log.Message($"World name is {world.info.name}");
-                    RimConnectAPI.UpdateWorld(world.info.name);
-                }
+                RimConnectSettings.initialiseSuccessful = !string.IsNullOrEmpty(RimConnectSettings.token);
 
-                return true;
+                return RimConnectSettings.initialiseSuccessful;
             } catch (Exception err)
             {
                 Log.Error(err.ToString());
-
                 return false;
             }
         }
