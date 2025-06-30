@@ -36,9 +36,7 @@ namespace RimConnection.Settings
                 List<ValidCommand> validCommands = ActionList.ActionListToApi().validCommands;
                 CommandOptionList commandOptionList = new CommandOptionList();
                 commandOptionList.commandOptions = validCommands.Select(validCommand => validCommand.toCommandOption()).ToList();
-                RimConnectAPI.PostUpdatedCommandOptions(commandOptionList);
-
-                // Update the global CommandOptionList with the modified CommandOptionList
+                // Update the global CommandOptionList with the reset list
                 CommandOptionListController.commandOptionList = commandOptionList;
                 Log.Message("RimConnect items have been reset");
             }

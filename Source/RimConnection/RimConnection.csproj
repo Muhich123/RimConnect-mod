@@ -115,6 +115,7 @@
     <Compile Include="Settings\CommandOptionSettings.cs" />
     <Compile Include="Managers\AlertManager.cs" />
     <Compile Include="ServerPoller.cs" />
+    <Compile Include="API\DonationAlertsAPI.cs" />
     <Compile Include="Managers\PawnCreationManager.cs" />
     <Compile Include="RimConnection.cs" />
     <Compile Include="API\RimConnectAPI.cs" />

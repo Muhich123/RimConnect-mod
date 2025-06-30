@@ -1,6 +1,6 @@
 <Defs>
     <LetterDef>
-        <defName>TwitchEvent</defName>
+        <defName>DonationEvent</defName>
         <color>(145, 71, 255)</color>
         <flashColor>(145, 71, 255)</flashColor>
         <flashInterval>5</flashInterval>
@@ -9,7 +9,7 @@
     </LetterDef>
 
     <LetterDef>
-        <defName>DangerousTwitchEvent</defName>
+        <defName>DangerousDonationEvent</defName>
         <color>(145, 71, 255)</color>
         <flashColor>(255, 0, 0)</flashColor>
         <flashInterval>5</flashInterval>
