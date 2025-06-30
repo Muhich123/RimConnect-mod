@@ -1,55 +1,29 @@
-﻿using RestSharp;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Verse;
-using RimWorld;
+using RimConnection.Settings;
 
 namespace RimConnection
 {
     [StaticConstructorOnStartup]
     public static class ServerInitialise
     {
-        static ServerInitialise() { Init(); }
+        static ServerInitialise()
+        {
+            Init();
+        }
 
         public static bool Init()
         {
-            // Generate this before validation so that MP clients have this list available otherwise
-            // desyncs occur
-            ValidCommandPayloadGenerator validCommandPayloadGenerator = ActionList.ActionListToApi();
-            try
-            {
-                Log.Message("Initialising Server");
+            Log.Message("Initialising DonationAlerts mode");
 
-                var authed = RimConnectAPI.AuthSecret(RimConnectSettings.secret, out string Token);
-                if (!authed)
-                {
-                    Log.Error("Unable to Connect to RimConnect server.");
-                    RimConnectSettings.token = "";
-                    return false;
-                }
+            // Build a local list of command options so the loyalty store works
+            CommandOptionList optionList = new CommandOptionList();
+            var validCommands = ActionList.ActionListToApi().validCommands;
+            optionList.commandOptions = validCommands.Select(vc => vc.toCommandOption()).ToList();
+            Settings.CommandOptionListController.commandOptionList = optionList;
 
-                RimConnectSettings.token = Token;
-                RimConnectAPI.PostValidCommands(validCommandPayloadGenerator);
-                RimConnectAPI.GetConfig();
-
-                //string worldName = Find.World.info.name;
-                var world = Find.World;
-                if(world != null)
-                {
-                    Log.Message($"World name is {world.info.name}");
-                    RimConnectAPI.UpdateWorld(world.info.name);
-                }
-
-                return true;
-            } catch (Exception err)
-            {
-                Log.Error(err.ToString());
-
-                return false;
-            }
+            RimConnectSettings.initialiseSuccessful = true;
+            return true;
         }
     }
 }

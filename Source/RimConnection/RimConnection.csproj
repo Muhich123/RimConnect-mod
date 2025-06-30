@@ -118,6 +118,7 @@
     <Compile Include="Managers\PawnCreationManager.cs" />
     <Compile Include="RimConnection.cs" />
     <Compile Include="API\RimConnectAPI.cs" />
+    <Compile Include="API\DonationAlertsAPI.cs" />
     <Compile Include="Managers\DropPodManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerInitialise.cs" />
