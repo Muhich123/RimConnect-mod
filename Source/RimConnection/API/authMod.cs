@@ -7,7 +7,7 @@ namespace RimConnection
 {
     public class AuthMod
     {
-        public string secret = RimConnectSettings.secret;
+        public string token = RimConnectSettings.donationToken;
     }
 
     public class AuthModResponse
