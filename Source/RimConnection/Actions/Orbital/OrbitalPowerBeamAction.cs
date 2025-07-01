@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using RimWorld;
@@ -9,6 +10,7 @@ namespace RimConnection
 {
     public class OrbitalPowerBeamAction: Action, IAction
     {
+        private int numberToSpawn = 5;
         public OrbitalPowerBeamAction()
         {
             Name = "Orbital Power Beam";
@@ -21,20 +23,30 @@ namespace RimConnection
         {
             Map currentMap = Find.CurrentMap;
 
-            CellRect cellRect = CellRect.WholeMap(currentMap).ContractedBy(30);
-            if (cellRect.IsEmpty)
+            var colonists = Find.ColonistBar.GetColonistsInOrder()
+                .Where(colonist => !colonist.Dead).ToList();
+
+            if (colonists.Count == 0)
             {
-                cellRect = CellRect.WholeMap(currentMap);
+                return;
             }
 
-            IntVec3 location;
-            if(CellFinder.TryFindRandomCellInsideWith(cellRect, (IntVec3 x) => true, out location))
+            for (int i = 0; i < numberToSpawn; i++)
             {
-                PowerBeam powerBeam = (PowerBeam) GenSpawn.Spawn(ThingDefOf.PowerBeam, location, currentMap);
+                Pawn colonist = colonists.RandomElement();
+                IntVec3 targetCell;
+                Predicate<IntVec3> validator = (IntVec3 c) => c.InBounds(currentMap) && c.Standable(currentMap);
+                if (!CellFinder.TryFindRandomCellNear(colonist.Position, currentMap, 3, validator, out targetCell))
+                {
+                    targetCell = colonist.Position;
+                }
+
+                PowerBeam powerBeam = (PowerBeam)GenSpawn.Spawn(ThingDefOf.PowerBeam, targetCell, currentMap);
                 powerBeam.duration = 600;
                 powerBeam.StartStrike();
-                AlertManager.BadEventNotification("{0} requested a bombardment from space!", location, boughtBy);
             }
+
+            AlertManager.BadEventNotification("{0} requested a bombardment from space!", colonists[0].Position, boughtBy);
 
         }
     }
