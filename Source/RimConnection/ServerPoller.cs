@@ -8,14 +8,15 @@ using Verse;
 
 namespace RimConnection
 {
-    class DonationPoller : GameComponent
+    // Maintains the old class name used in saved games
+    class ServerPoller : GameComponent
     {
         static DateTime lastGETRequest = DateTime.UtcNow;
         static readonly TimeSpan timeBetweenRequests = TimeSpan.FromSeconds(30d);
         static ConcurrentQueue<Donation> donationQueue = new ConcurrentQueue<Donation>();
         static int lastDonationId = 0;
 
-        public DonationPoller(Game game) { }
+        public ServerPoller(Game game) { }
 
         public override void FinalizeInit()
         {

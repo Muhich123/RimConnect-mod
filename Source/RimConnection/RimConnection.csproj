@@ -114,7 +114,7 @@
     <Compile Include="Settings\ResetCommandOptionsModal.cs" />
     <Compile Include="Settings\CommandOptionSettings.cs" />
     <Compile Include="Managers\AlertManager.cs" />
-    <Compile Include="DonationPoller.cs" />
+    <Compile Include="ServerPoller.cs" />
     <Compile Include="Managers\PawnCreationManager.cs" />
     <Compile Include="RimConnection.cs" />
     <Compile Include="Managers\DropPodManager.cs" />
@@ -123,6 +123,7 @@
     <Compile Include="Actions\Action.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="API\CommandList.cs" />
+    <Compile Include="SetWorldName.cs" />
     <Compile Include="Windows\TextInputWindow.cs" />
   </ItemGroup>
   <ItemGroup>
