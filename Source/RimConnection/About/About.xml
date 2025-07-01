@@ -42,11 +42,9 @@ Enhance your RimWorld experience by allowing your community to tell the narrativ
 === SETUP ===
 
 1. Subscribe/install this mod
-2. Install the Twitch extension, and visit the configuration page (Make sure to enable the extension in your video extension slot!).
-3. https://dashboard.twitch.tv/extensions/dpmu4zz6rii0emgay9ajrrhdjcw6ml
-4. From the configuration page, copy the provided secret, make sure not to share this.
-5. Open the RimWorld mod settings for RimConnect, paste in the secret and click connect.
-6. Start up the game and have your Moderators create polls for your viewers to vote on. 
+2. Get your Donation Alerts API token from https://www.donationalerts.com/.
+3. Open the RimWorld mod settings for RimConnect, paste the token and click connect.
+4. Configure donation amounts for each event in the settings window.
 
 === PLANNED FEATURES ===
 
