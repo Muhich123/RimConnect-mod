@@ -1,24 +1,18 @@
-﻿using System;
 using Verse;
 
 namespace RimConnection
 {
+    // Legacy component kept for save compatibility
     class SetWorldName : GameComponent
     {
-        public SetWorldName(Game game)
-        {
-        }
+        public SetWorldName(Game game) { }
 
-        public SetWorldName()
-        {
-        }
+        public SetWorldName() { }
 
         public override void FinalizeInit()
         {
             base.FinalizeInit();
-            string worldName = Find.World.info.name;
-            Log.Message($"World name is {worldName}");
-            RimConnectAPI.UpdateWorld(worldName);
+            // No-op: previously updated world name on server
         }
     }
 }

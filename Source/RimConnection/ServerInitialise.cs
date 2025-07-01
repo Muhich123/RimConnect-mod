@@ -1,11 +1,6 @@
-﻿using RestSharp;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Text;
-
 using Verse;
-using RimWorld;
 
 namespace RimConnection
 {
@@ -16,38 +11,26 @@ namespace RimConnection
 
         public static bool Init()
         {
-            // Generate this before validation so that MP clients have this list available otherwise
-            // desyncs occur
-            ValidCommandPayloadGenerator validCommandPayloadGenerator = ActionList.ActionListToApi();
             try
             {
-                Log.Message("Initialising Server");
+                Log.Message("Initialising Donation Alerts connection");
+                var donations = DonationAlertsAPI.GetDonations(RimConnectSettings.donationToken);
+                RimConnectSettings.initialiseSuccessful = donations != null;
 
-                var authed = RimConnectAPI.AuthSecret(RimConnectSettings.secret, out string Token);
-                if (!authed)
+                if (Settings.CommandOptionListController.commandOptionList == null)
                 {
-                    Log.Error("Unable to Connect to RimConnect server.");
-                    RimConnectSettings.token = "";
-                    return false;
+                    var validCommands = ActionList.ActionListToApi().validCommands;
+                    CommandOptionList commandOptionList = new CommandOptionList();
+                    commandOptionList.commandOptions = validCommands.Select(vc => vc.toCommandOption()).ToList();
+                    Settings.CommandOptionListController.commandOptionList = commandOptionList;
                 }
 
-                RimConnectSettings.token = Token;
-                RimConnectAPI.PostValidCommands(validCommandPayloadGenerator);
-                RimConnectAPI.GetConfig();
-
-                //string worldName = Find.World.info.name;
-                var world = Find.World;
-                if(world != null)
-                {
-                    Log.Message($"World name is {world.info.name}");
-                    RimConnectAPI.UpdateWorld(world.info.name);
-                }
-
-                return true;
-            } catch (Exception err)
+                return RimConnectSettings.initialiseSuccessful;
+            }
+            catch (Exception err)
             {
                 Log.Error(err.ToString());
-
+                RimConnectSettings.initialiseSuccessful = false;
                 return false;
             }
         }

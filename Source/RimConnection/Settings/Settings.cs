@@ -11,17 +11,10 @@ namespace RimConnection
     {
         public static string[] validCommands;
 
-#if DEBUG
-        public static string BASE_URL = "http://localhost:8080/";
-#else
-        public static string BASE_URL = "http://rimconnect-backend.herokuapp.com/";
-#endif
-
-        public static string secret = "";
-        public static string token = "";
+        public static string donationToken = "";
         public static bool initialiseSuccessful = false;
 
-        bool showSecret = false;
+        bool showToken = false;
 
         public static int silverAwardPoints = -1;
 
@@ -31,7 +24,7 @@ namespace RimConnection
         {
             base.ExposeData();
 
-            Scribe_Values.Look<string>(ref secret, "secret", "", true);
+            Scribe_Values.Look(ref donationToken, "donationToken", "", true);
             Scribe_Values.Look(ref silverAwardPoints, "silverAwardPoints");
 
         }
@@ -70,47 +63,47 @@ namespace RimConnection
 
             GUI.EndGroup();
 
-            Rect secretGroup = new Rect(0, statusGroup.y + statusGroup.height + 20f, rect.width, 72f);
+            Rect tokenGroup = new Rect(0, statusGroup.y + statusGroup.height + 20f, rect.width, 72f);
 
-            GUI.BeginGroup(secretGroup);
+            GUI.BeginGroup(tokenGroup);
 
-            Rect secretLabel = new Rect(0, 0, defaultWidth, 24f);
+            Rect tokenLabel = new Rect(0, 0, defaultWidth, 24f);
             Rect pasteButton = new Rect(defaultWidth, 24f, defaultWidth, 24f);
             Rect warningLabel = new Rect(0, 48, 400f, 24f);
 
-            Widgets.Label(secretLabel, "Secret:");
-            secretLabel.x = secretLabel.width + WidgetRow.LabelGap;
-            
-            if (showSecret)
+            Widgets.Label(tokenLabel, "Donation Token:");
+            tokenLabel.x = tokenLabel.width + WidgetRow.LabelGap;
+
+            if (showToken)
             {
-                secret = Widgets.TextField(secretLabel, secret);
+                donationToken = Widgets.TextField(tokenLabel, donationToken);
             }
             else
             {
-                Widgets.Label(secretLabel, new string('*', secret.Length));
+                Widgets.Label(tokenLabel, new string('*', donationToken.Length));
             }
 
-            secretLabel.x += secretLabel.width + WidgetRow.LabelGap;
-            if (!showSecret && Widgets.ButtonText(secretLabel, "Show"))
+            tokenLabel.x += tokenLabel.width + WidgetRow.LabelGap;
+            if (!showToken && Widgets.ButtonText(tokenLabel, "Show"))
             {
-                showSecret = true;
+                showToken = true;
             }
-            else if (Widgets.ButtonText(secretLabel, "Hide"))
+            else if (Widgets.ButtonText(tokenLabel, "Hide"))
             {
-                showSecret = false;
+                showToken = false;
             }
 
             if (Widgets.ButtonText(pasteButton, "Paste from Clipboard"))
             {
-                secret = GUIUtility.systemCopyBuffer;
+                donationToken = GUIUtility.systemCopyBuffer;
             }
 
-            Widgets.Label(warningLabel, "<color=red>Warning: Do not show your secret on stream!</color>");
+            Widgets.Label(warningLabel, "<color=red>Warning: Do not show your token on stream!</color>");
 
             GUI.EndGroup();
 
-            Rect loyaltyStoreHeader = new Rect(0, secretGroup.y + secretGroup.height + 10f, rect.width, 64f);
-            Widgets.Label(loyaltyStoreHeader, "<size=32>Loyalty Settings</size>");
+            Rect loyaltyStoreHeader = new Rect(0, tokenGroup.y + tokenGroup.height + 10f, rect.width, 64f);
+            Widgets.Label(loyaltyStoreHeader, "<size=32>Donation Settings</size>");
 
             Rect itemStoreGroup = new Rect(0, loyaltyStoreHeader.y + loyaltyStoreHeader.height + 10f, rect.width, 24f);
 
@@ -119,7 +112,7 @@ namespace RimConnection
                 GUI.BeginGroup(itemStoreGroup);
 
                 Rect itemLabel = new Rect(0, 0, defaultWidth, 24f);
-                Widgets.Label(itemLabel, "Loyalty Store Items:");
+                Widgets.Label(itemLabel, "Donation Events:");
 
                 itemLabel.x += itemLabel.width + WidgetRow.LabelGap;
 
@@ -144,27 +137,7 @@ namespace RimConnection
                 Widgets.Label(itemStoreGroup, "Cannot edit items without proper connection to RimConnect Servers");
             }
 
-            Rect silversPerGroup = new Rect(0, itemStoreGroup.y + itemStoreGroup.height + 10f, rect.width, 24f);
-            GUI.BeginGroup(silversPerGroup);
-
-            Rect silverLabel = new Rect(0, 0, defaultWidth, 24f);
-            Widgets.Label(silverLabel, "Silver per 2 minutes:");
-
-            silverLabel.x += silverLabel.width + WidgetRow.LabelGap;
-
-            string silverAwardPointsBuffer = silverAwardPoints.ToString();
-            Widgets.TextFieldNumeric(silverLabel, ref silverAwardPoints, ref silverAwardPointsBuffer);
-
-            silverLabel.x += silverLabel.width + WidgetRow.LabelGap;
-
-            if (Widgets.ButtonText(silverLabel, "Update on Server"))
-            {
-                RimConnectAPI.PostConfig();
-            }
-
-            GUI.EndGroup();
-
-            Rect AdditionalInfoGroup = new Rect(0, silversPerGroup.y + 70f, rect.width, 50f);
+            Rect AdditionalInfoGroup = new Rect(0, itemStoreGroup.y + 70f, rect.width, 50f);
             GUI.BeginGroup(AdditionalInfoGroup);
 
             Rect additionalInfoLabel = new Rect(0, 0, 2 * defaultWidth, 24f);

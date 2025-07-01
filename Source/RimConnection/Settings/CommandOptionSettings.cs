@@ -54,7 +54,6 @@ namespace RimConnection.Settings
                 return;
             }
 
-            RimConnectAPI.PostUpdatedCommandOptions(updatedCommandOptions);
 
             // Update the global CommandOptionList with the modified CommandOptionList
             this.cachedCommandOptionList.commandOptions = this.commandOptions;
